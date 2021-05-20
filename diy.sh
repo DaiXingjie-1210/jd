@@ -2,33 +2,43 @@
 cat /etc/hosts | grep "raw.githubusercontent.com" -q
 if [ $? -ne 0 ]; then
   echo "199.232.28.133 raw.githubusercontent.com" >>/etc/hosts
+  echo "199.232.68.133 raw.githubusercontent.com" >>/etc/hosts
   echo "185.199.108.133 raw.githubusercontent.com" >>/etc/hosts
   echo "185.199.109.133 raw.githubusercontent.com" >>/etc/hosts
   echo "185.199.110.133 raw.githubusercontent.com" >>/etc/hosts
   echo "185.199.111.133 raw.githubusercontent.com" >>/etc/hosts
 fi
 
+## 定义代理链接
+PROXY_URL=https://ghproxy.com/
+## 可选 https://mirror.ghproxy.com/ https://pd.zwc365.com/
 
 ##############################  作  者  昵  称  （必填）  ##############################
 # 使用空格隔开
-author_list="1 2 3"
+author_list="Public LongZhuZhu adolf adolf"
 
-##############################  作  者  脚  本  地  址  URL  （必填）  ##############################
+##############################  作  者  脚  本  地  址  链  接   （必填）  ##############################
 # 例如：https://raw.sevencdn.com/whyour/hundun/master/quanx/jx_nc.js
 # 1.从作者库中随意挑选一个脚本地址，每个作者的地址添加一个即可，无须重复添加
 # 2.将地址最后的 “脚本名称+后缀” 剪切到下一个变量里（my_scripts_list_xxx）
 
 scripts_base_url_1=https://gitee.com/SuperManito/scripts/raw/master/
-scripts_base_url_2=https://raw.githubusercontent.com/nianyuguai/longzhuzhu/main/qx/
-scripts_base_url_3=https://raw.githubusercontent.com/Sunert/Script/master/Task/
+## 龙王的库
+scripts_base_url_2=${PROXY_URL}https://raw.githubusercontent.com/nianyuguai/longzhuzhu/main/qx/
+## 庙里的经书
+scripts_base_url_3=${PROXY_URL}https://raw.githubusercontent.com/monk-coder/dust/dust/member/
 
 ## 添加更多脚本地址URL示例：scripts_base_url_3=https://raw.sevencdn.com/whyour/hundun/master/quanx/
 
 ##############################  作  者  脚  本  名  称  （必填）  ##############################
 # 将相应作者的脚本填写到以下变量中
-my_scripts_list_1="jd_paopao.js jd_mother_jump.js jd_shake.js jd_inter_shopsign.js jd_shop_followsku.js jd_shop_lottery.js jd_skyworth.js jx_cfdtx.js"
+my_scripts_list_1="jd_paopao.js jd_mother_jump.js jd_shake.js jd_inter_shopsign.js jd_shop_followsku.js jd_shop_lottery.js jx_cfdtx.js jd_try.js"
 my_scripts_list_2="jd_super_redrain.js jd_half_redrain.js"
-my_scripts_list_3="weibo.js"
+my_scripts_list_3="adolf_flp.js adolf_oneplus.js"
+
+
+## 添加脚本名称示例：my_scripts_list_2="jd_test1.js jd_test2.js jd_test3.js"
+##                 my_scripts_list_3="jd_ceshiA.js jd_ceshiB.js jd_ceshiC.js"
 
 ##############################  随  机  函  数  ##############################
 rand() {
@@ -41,7 +51,7 @@ cd ${ShellDir}
 index=1
 for author in $author_list; do
   ##  echo -e "开始下载 $author 的活动脚本："
-  echo -e "开始下载第三方活动脚本："
+  echo -e "开始下载 $author 的活动脚本"
   echo -e ''
   # 下载my_scripts_list中的每个js文件，重命名增加前缀"作者昵称_"，增加后缀".new"
   eval scripts_list=\$my_scripts_list_${index}
@@ -77,6 +87,11 @@ for author in $author_list; do
   index=$(($index + 1))
 done
 
+## 京东试用脚本添加取关定时任务
+[ -f ${ScriptsDir}/jd_try.js ] && cat ${ListCron} | grep "5 10 \* \* \* bash jd jd_unsubscribe" -q
+if [ $? -ne 0 ]; then
+  echo -e '\n# 京东试用脚本（jd_try.js）添加的取关定时任务\n5 10 * * * bash jd jd_unsubscribe' >>${ListCron}
+fi
+
 ##############################  删  除  失  效  的  活  动  脚  本  ##############################
 ## 删除旧版本失效的活动示例： rm -rf ${ScriptsDir}/jd_test.js
-rm -rf ${ScriptsDir}/jd_live_lottery_social.js
